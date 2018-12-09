@@ -11,11 +11,11 @@ var db *bolt.DB
 
 // StartBoltDB starts the bolt database.
 // https://github.com/boltdb/bolt
-func StartBoltDB() {
+func StartBoltDB(fileName string) {
 	// Open the ledger.db data file in your current directory.
 	// It will be created if it doesn't exist.
 	var err error
-	db, err = bolt.Open("ledger.db", 0600, &bolt.Options{Timeout: 5 * time.Second})
+	db, err = bolt.Open(fileName, 0600, &bolt.Options{Timeout: 5 * time.Second})
 	if err != nil {
 		log.WithError(err).Fatal("failed to start bolt db")
 	}

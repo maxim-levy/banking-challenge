@@ -10,8 +10,8 @@ import (
 	"zombiezen.com/go/capnproto2/rpc"
 )
 
-// StartServer starts listening for calls.
-func StartServer(c net.Conn) error {
+// Register methods and start listening for calls.
+func Register(c net.Conn) error {
 	// Create a new locally implemented accountFactory.
 	accountSrv := account.AccountFactory_ServerToClient(accountMethods.AccountFactory{})
 	// Create a new locally implemented transferFactory.

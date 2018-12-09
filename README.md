@@ -45,12 +45,16 @@ This will bring up more info about this command.
 
 ## Server
 
+## Tests
+Both the server and client folder has their own separate tests.
+You can run them by using the following command `go test ./...` in the client or server folder.
 
 ## TODO's
 * ~~Add support for ENV runtime configuration.~~
 * Add redundancy for the server-side.
 * Add auth layer to controll who can modify accounts and balances.
 * Vendor client and server applications
+* ~~Write unit-tests.~~
 * ~~Add data persitance using bolt db~~
 * ~~Add create account method~~
 * ~~Add delete account method~~
