@@ -1,63 +1,64 @@
 package main
 
 import (
-	"context"
-	"net"
+	createaccount "client/actions/create-account"
+	deleteaccount "client/actions/delete-account"
 	"os"
-	"protos/account"
 
 	"github.com/apex/log"
 	"github.com/apex/log/handlers/text"
-	"zombiezen.com/go/capnproto2/rpc"
+	"github.com/urfave/cli"
 )
 
-func client(ctx context.Context, c net.Conn) error {
-	// Create a connection that we can use to get the HashFactory.
-	conn := rpc.NewConn(rpc.StreamTransport(c))
-	defer conn.Close()
-	// Get the "bootstrap" interface.  This is the capability set with
-	// rpc.MainInterface on the remote side.
-	af := account.AccountFactory{Client: conn.Bootstrap(ctx)}
-
-	ca := af.CreateAccount(ctx, func(p account.AccountFactory_createAccount_Params) error {
-		p.SetInitialBalance(1000)
-		return nil
-	})
-	result1, err := ca.Struct()
-	if err != nil {
-		log.WithError(err).Error("CreateAccount call failed")
-		return err
-	}
-
-	log.Infof("%+v", result1.String())
-
-	da := af.DeleteAccount(ctx, func(p account.AccountFactory_deleteAccount_Params) error {
-		if err := p.SetSourceAccount("test"); err != nil {
-			log.WithError(err).Error("failed to SetSourceAccount")
-			return err
-		}
-		return nil
-	})
-	result2, err := da.Struct()
-	if err != nil {
-		log.WithError(err).Error("DeleteAccount call failed")
-		return err
-	}
-
-	log.Infof("%+v", result2.String())
-
-	return nil
-}
-
 func main() {
+	// Configure loging
 	log.SetHandler(text.New(os.Stderr))
-	log.Info("starting client")
-	conn, err := net.Dial("tcp", "127.0.0.1:8080")
-	if err != nil {
-		log.WithError(err).Fatal("can't connect to server")
+
+	// Setup CLI
+	app := cli.NewApp()
+	app.Name = "crypto-banking"
+	app.Usage = "Crypto-banking is a system that consist of a client and server (bank) that allows you to do basic finintial operations."
+	app.Version = "1.0.0"
+	app.Commands = []cli.Command{
+		{
+			Name:    "create-account",
+			Aliases: []string{"ca"},
+			Usage:   "Register an new account",
+			Action: func(c *cli.Context) error {
+				s := createaccount.NewCreateAccount(
+					c.String("initial-balance"),
+				)
+				return s.Do()
+			},
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "initial-balance, ib",
+					Value: "0",
+					Usage: "Initial balance for the new account, in cents",
+				},
+			},
+		},
+		{
+			Name:    "delete-account",
+			Aliases: []string{"da"},
+			Usage:   "Delete an existing account",
+			Action: func(c *cli.Context) error {
+				s := deleteaccount.NewDeleteAccount(
+					c.String("account-number"),
+				)
+				return s.Do()
+			},
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "account-number, an",
+					Value: "",
+					Usage: "Number of account to be deleted",
+				},
+			},
+		},
 	}
 
-	if err := client(context.Background(), conn); err != nil {
-		log.WithError(err).Fatal("client has failed")
+	if err := app.Run(os.Args); err != nil {
+		log.WithError(err).Fatal("Sorry, Something went wrong when running crypto-banking")
 	}
 }

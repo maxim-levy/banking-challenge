@@ -5,10 +5,10 @@ $Go.import("protos/account");
 
 interface AccountFactory {
 	createAccount @0 (initialBalance :Int64) -> (account: Account);
-	deleteAccount @1 (sourceAccount: Text) -> (success: Bool);
+	deleteAccount @1 (accountNumber: Text) -> (success: Bool);
 }
 
 struct Account {
-	sourceAccount @0 :Text;
-	initialBalance @1 :Int64;
+	accountNumber @0 :Text;
+	balance @1 :Int64;
 }

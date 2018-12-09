@@ -3,47 +3,21 @@ package main
 import (
 	"net"
 	"os"
-	"protos/account"
+	"server/methods/account"
+	"server/models"
 
 	"github.com/apex/log"
 	"github.com/apex/log/handlers/text"
-	"zombiezen.com/go/capnproto2/rpc"
-	"zombiezen.com/go/capnproto2/server"
 )
-
-// accountFactory is a local implementation of AccountFactory.
-type accountFactory struct{}
-
-func (af accountFactory) CreateAccount(call account.AccountFactory_createAccount) error {
-	server.Ack(call.Options)
-	log.Info("CreateAccount called")
-	return nil
-}
-
-func (af accountFactory) DeleteAccount(call account.AccountFactory_deleteAccount) error {
-	log.Info("DeleteAccount called")
-	server.Ack(call.Options)
-
-	v, _ := call.Params.SourceAccount()
-	log.Infof("%+v", v)
-	return nil
-}
-
-func startServer(c net.Conn) error {
-	// Create a new locally implemented HashFactory.
-	srv := account.AccountFactory_ServerToClient(accountFactory{})
-	// Listen for calls, using the HashFactory as the bootstrap interface.
-	conn := rpc.NewConn(rpc.StreamTransport(c), rpc.MainInterface(srv.Client))
-	if err := conn.Wait(); err != nil {
-		log.WithError(err).Error("conn wait error")
-		return err
-	}
-	return nil
-}
 
 func main() {
 	log.SetHandler(text.New(os.Stderr))
-	log.Info("starting server")
+
+	// Start DB
+	// Will thow with fatal if there is a problem.
+	models.StartBoltDB()
+
+	// Open ports and start listening for connections.
 	addr, err := net.ResolveTCPAddr("tcp", ":8080")
 	if err != nil {
 		log.WithError(err).Fatal("failed")
@@ -52,6 +26,7 @@ func main() {
 	if err != nil {
 		log.WithError(err).Fatal("failed")
 	}
+	log.Info("server started")
 
 	// Loop to make sure we can keep accepting connections
 	for {
@@ -60,7 +35,8 @@ func main() {
 			log.WithError(err).Fatal("failed")
 		}
 
-		if err := startServer(conn); err != nil {
+		// Register method listeners
+		if err := account.StartServer(conn); err != nil {
 			log.WithError(err).Fatal("failed")
 		}
 	}

@@ -21,3 +21,5 @@ After this you should be able to run `./build.sh` with no warnings.
 ## Client
 
 ## Server
+
+## TODO's
