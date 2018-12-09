@@ -8,7 +8,7 @@ import (
 	"zombiezen.com/go/capnproto2/server"
 )
 
-func (af accountFactory) CreateAccount(call account.AccountFactory_createAccount) error {
+func (af AccountFactory) CreateAccount(call account.AccountFactory_createAccount) error {
 	log.Info("Called: CreateAccount")
 	server.Ack(call.Options)
 

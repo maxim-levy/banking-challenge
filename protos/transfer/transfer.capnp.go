@@ -24,7 +24,7 @@ func (c TransferFactory) TransferFunds(ctx context.Context, params func(Transfer
 		Method: capnp.Method{
 			InterfaceID:   0xc93b78b26d6cd25a,
 			MethodID:      0,
-			InterfaceName: "protos/transfer/account.capnp:TransferFactory",
+			InterfaceName: "protos/transfer/transfer.capnp:TransferFactory",
 			MethodName:    "transferFunds",
 		},
 		Options: capnp.NewCallOptions(opts),
@@ -54,7 +54,7 @@ func TransferFactory_Methods(methods []server.Method, s TransferFactory_Server) 
 		Method: capnp.Method{
 			InterfaceID:   0xc93b78b26d6cd25a,
 			MethodID:      0,
-			InterfaceName: "protos/transfer/account.capnp:TransferFactory",
+			InterfaceName: "protos/transfer/transfer.capnp:TransferFactory",
 			MethodName:    "transferFunds",
 		},
 		Impl: func(c context.Context, opts capnp.CallOptions, p, r capnp.Struct) error {
@@ -201,26 +201,26 @@ func (s TransferFactory_transferFunds_Results) String() string {
 	return str
 }
 
-func (s TransferFactory_transferFunds_Results) Account() (Account, error) {
+func (s TransferFactory_transferFunds_Results) Record() (TransactionalRecord, error) {
 	p, err := s.Struct.Ptr(0)
-	return Account{Struct: p.Struct()}, err
+	return TransactionalRecord{Struct: p.Struct()}, err
 }
 
-func (s TransferFactory_transferFunds_Results) HasAccount() bool {
+func (s TransferFactory_transferFunds_Results) HasRecord() bool {
 	p, err := s.Struct.Ptr(0)
 	return p.IsValid() || err != nil
 }
 
-func (s TransferFactory_transferFunds_Results) SetAccount(v Account) error {
+func (s TransferFactory_transferFunds_Results) SetRecord(v TransactionalRecord) error {
 	return s.Struct.SetPtr(0, v.Struct.ToPtr())
 }
 
-// NewAccount sets the account field to a newly
-// allocated Account struct, preferring placement in s's segment.
-func (s TransferFactory_transferFunds_Results) NewAccount() (Account, error) {
-	ss, err := NewAccount(s.Struct.Segment())
+// NewRecord sets the record field to a newly
+// allocated TransactionalRecord struct, preferring placement in s's segment.
+func (s TransferFactory_transferFunds_Results) NewRecord() (TransactionalRecord, error) {
+	ss, err := NewTransactionalRecord(s.Struct.Segment())
 	if err != nil {
-		return Account{}, err
+		return TransactionalRecord{}, err
 	}
 	err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
 	return ss, err
@@ -256,121 +256,164 @@ func (p TransferFactory_transferFunds_Results_Promise) Struct() (TransferFactory
 	return TransferFactory_transferFunds_Results{s}, err
 }
 
-func (p TransferFactory_transferFunds_Results_Promise) Account() Account_Promise {
-	return Account_Promise{Pipeline: p.Pipeline.GetPipeline(0)}
+func (p TransferFactory_transferFunds_Results_Promise) Record() TransactionalRecord_Promise {
+	return TransactionalRecord_Promise{Pipeline: p.Pipeline.GetPipeline(0)}
 }
 
-type Account struct{ capnp.Struct }
+type TransactionalRecord struct{ capnp.Struct }
 
-// Account_TypeID is the unique identifier for the type Account.
-const Account_TypeID = 0xc44234756a55b499
+// TransactionalRecord_TypeID is the unique identifier for the type TransactionalRecord.
+const TransactionalRecord_TypeID = 0xafbe625efd0fe5ae
 
-func NewAccount(s *capnp.Segment) (Account, error) {
-	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 8, PointerCount: 1})
-	return Account{st}, err
+func NewTransactionalRecord(s *capnp.Segment) (TransactionalRecord, error) {
+	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 24, PointerCount: 2})
+	return TransactionalRecord{st}, err
 }
 
-func NewRootAccount(s *capnp.Segment) (Account, error) {
-	st, err := capnp.NewRootStruct(s, capnp.ObjectSize{DataSize: 8, PointerCount: 1})
-	return Account{st}, err
+func NewRootTransactionalRecord(s *capnp.Segment) (TransactionalRecord, error) {
+	st, err := capnp.NewRootStruct(s, capnp.ObjectSize{DataSize: 24, PointerCount: 2})
+	return TransactionalRecord{st}, err
 }
 
-func ReadRootAccount(msg *capnp.Message) (Account, error) {
+func ReadRootTransactionalRecord(msg *capnp.Message) (TransactionalRecord, error) {
 	root, err := msg.RootPtr()
-	return Account{root.Struct()}, err
+	return TransactionalRecord{root.Struct()}, err
 }
 
-func (s Account) String() string {
-	str, _ := text.Marshal(0xc44234756a55b499, s.Struct)
+func (s TransactionalRecord) String() string {
+	str, _ := text.Marshal(0xafbe625efd0fe5ae, s.Struct)
 	return str
 }
 
-func (s Account) AccountNumber() (string, error) {
+func (s TransactionalRecord) SourceAccount() (string, error) {
 	p, err := s.Struct.Ptr(0)
 	return p.Text(), err
 }
 
-func (s Account) HasAccountNumber() bool {
+func (s TransactionalRecord) HasSourceAccount() bool {
 	p, err := s.Struct.Ptr(0)
 	return p.IsValid() || err != nil
 }
 
-func (s Account) AccountNumberBytes() ([]byte, error) {
+func (s TransactionalRecord) SourceAccountBytes() ([]byte, error) {
 	p, err := s.Struct.Ptr(0)
 	return p.TextBytes(), err
 }
 
-func (s Account) SetAccountNumber(v string) error {
+func (s TransactionalRecord) SetSourceAccount(v string) error {
 	return s.Struct.SetText(0, v)
 }
 
-func (s Account) Balance() int64 {
+func (s TransactionalRecord) SourceBalance() int64 {
 	return int64(s.Struct.Uint64(0))
 }
 
-func (s Account) SetBalance(v int64) {
+func (s TransactionalRecord) SetSourceBalance(v int64) {
 	s.Struct.SetUint64(0, uint64(v))
 }
 
-// Account_List is a list of Account.
-type Account_List struct{ capnp.List }
-
-// NewAccount creates a new list of Account.
-func NewAccount_List(s *capnp.Segment, sz int32) (Account_List, error) {
-	l, err := capnp.NewCompositeList(s, capnp.ObjectSize{DataSize: 8, PointerCount: 1}, sz)
-	return Account_List{l}, err
+func (s TransactionalRecord) DestinationAccount() (string, error) {
+	p, err := s.Struct.Ptr(1)
+	return p.Text(), err
 }
 
-func (s Account_List) At(i int) Account { return Account{s.List.Struct(i)} }
+func (s TransactionalRecord) HasDestinationAccount() bool {
+	p, err := s.Struct.Ptr(1)
+	return p.IsValid() || err != nil
+}
 
-func (s Account_List) Set(i int, v Account) error { return s.List.SetStruct(i, v.Struct) }
+func (s TransactionalRecord) DestinationAccountBytes() ([]byte, error) {
+	p, err := s.Struct.Ptr(1)
+	return p.TextBytes(), err
+}
 
-func (s Account_List) String() string {
-	str, _ := text.MarshalList(0xc44234756a55b499, s.List)
+func (s TransactionalRecord) SetDestinationAccount(v string) error {
+	return s.Struct.SetText(1, v)
+}
+
+func (s TransactionalRecord) DestinationBalance() int64 {
+	return int64(s.Struct.Uint64(8))
+}
+
+func (s TransactionalRecord) SetDestinationBalance(v int64) {
+	s.Struct.SetUint64(8, uint64(v))
+}
+
+func (s TransactionalRecord) Amount() uint64 {
+	return s.Struct.Uint64(16)
+}
+
+func (s TransactionalRecord) SetAmount(v uint64) {
+	s.Struct.SetUint64(16, v)
+}
+
+// TransactionalRecord_List is a list of TransactionalRecord.
+type TransactionalRecord_List struct{ capnp.List }
+
+// NewTransactionalRecord creates a new list of TransactionalRecord.
+func NewTransactionalRecord_List(s *capnp.Segment, sz int32) (TransactionalRecord_List, error) {
+	l, err := capnp.NewCompositeList(s, capnp.ObjectSize{DataSize: 24, PointerCount: 2}, sz)
+	return TransactionalRecord_List{l}, err
+}
+
+func (s TransactionalRecord_List) At(i int) TransactionalRecord {
+	return TransactionalRecord{s.List.Struct(i)}
+}
+
+func (s TransactionalRecord_List) Set(i int, v TransactionalRecord) error {
+	return s.List.SetStruct(i, v.Struct)
+}
+
+func (s TransactionalRecord_List) String() string {
+	str, _ := text.MarshalList(0xafbe625efd0fe5ae, s.List)
 	return str
 }
 
-// Account_Promise is a wrapper for a Account promised by a client call.
-type Account_Promise struct{ *capnp.Pipeline }
+// TransactionalRecord_Promise is a wrapper for a TransactionalRecord promised by a client call.
+type TransactionalRecord_Promise struct{ *capnp.Pipeline }
 
-func (p Account_Promise) Struct() (Account, error) {
+func (p TransactionalRecord_Promise) Struct() (TransactionalRecord, error) {
 	s, err := p.Pipeline.Struct()
-	return Account{s}, err
+	return TransactionalRecord{s}, err
 }
 
-const schema_8e7192767ff40215 = "x\xda\xa4\x92\xbfk\x14A\x1c\xc5\xdf\x9b\xd9\xf5\x12<" +
-	"\xe1\x96=\x1b\x8b\x9c\x88\x85\x82\xde\x11\x93Bb\x91\\" +
-	"\x88\x11\x05eG\x92\"b\xe1d\xb3B\xe4n\xf7\x9c" +
-	"\xdd\xf5Ws\xfe\x05\x16\x82\x85\x96\xf6\"\x88\xfe\x07\x8a" +
-	"\x84\x80\x85\x9d\xa5\xa5e \xd8\x8e\xccz?,\x04\x0b" +
-	"\xbb\xef\xcc\xbcy\x9f\xef\xfb\xce4~\xac\x88y\xff\xb3" +
-	"\x00\xd4I\xff\x88}\xf9~\xf3^\xb9\xb8\xfa\x11j\x8e" +
-	"\xb4\xc7\xc5\xe1\xf0\xc1\xf3\xfb\xcf\xe0\xb3\x06,\\\xe5\x05" +
-	"\x86[\xae\x0c7\xf9\x10\xb4\xb7\xbe\xf6\xfa\xef\x1e]\xda" +
-	"C0'\xa7bp\xe1\x03\x0d\xc3\xbdJ\xf9\x89W\xc2" +
-	"\x03W\xd9\xce\xda\xb5'\xaf\xa5\xfa\x0e\xd5&\x01_8" +
-	"\xcfo<!\xc0\xf0\x80oA\xfbs\xff\xa9\x7f\xf4\xcb" +
-	"\xfe!\x82\xb6\x13T\xd0\x17\xe2\x94\x13\xbc\x11\xcb8o" +
-	"\x07&+\xb2\xbcSH\xa3\xd3\xfcnb::\x8e\xb3" +
-	"2-\xda\xb1\x1e\xa4\x83\xa5n\xdc\xaa\x96\x11\xa9f\xa4" +
-	"\x07x\x04\x82\xb3\x06Pg$\xd5\xa2 \xd9t\xec`" +
-	"~\x15P\xe7$\xd5EA;2\xb9\x81V\xd9\xdfN" +
-	"\x0c\xeb\x10\xac\x83\xc3m\xdd\xd3i\x9c\xd0\x87\xa0\x0fN" +
-	"\xe8\xde\xdf\xe9\x1b\xa3\xedu\xdd\x8a\x8b\xcc<v]x" +
-	"\xd2\xff#9\xc7\x01\x83\xc0@\x04\xb35[\x8c\xee\xa0" +
-	"\xb5^\xa6;\xf9\x0a#N9\xb5\x7fq*L{\xec" +
-	"Q9\x9c\x8e\xb4\xd1\xb2\x9f\xab\xfa$\xffe\x97\x7fM" +
-	"RE\x82\xc1x\x00\xd7_\x01*\x92T\xb7\x05)\x9a" +
-	"\x14@\xb0\xb5\x04\xa8\x0dIuG\xd0\xe6Yi\xe2\xa4" +
-	"\x1b\xe3\xf7H\xc7C\xb1;I^\xec\xa6\xba\xe0n\x96" +
-	"v]_rz\xb8\xac\xfb\x95v\x16\x82\xb3\xf8\xcf " +
-	"7\x93\xbc\xac\xf5\x8a\\y\x93$\xc7\xdc\xab\xcdH\xaa" +
-	"\xa6\xe0p\xe4\xc5\xc6\xf4\xd3\x82l\x80\xbf\x02\x00\x00\xff" +
-	"\xff\x09\x0e\xc8k"
+const schema_8e7192767ff40215 = "x\xda\x9c\x93Ak\x13Q\x10\xc7\xe7?o\xd7\x18\x8c" +
+	"\xb4\x8f\xacGY\x11O\x82\x8d\xd2[=\xa4-\xb5\xa2" +
+	" \xe4\x95^\x14\x15\x9f/[\x08$\xbb\xf1\xedF\xb4" +
+	"X\xf4`\xc1\x8bR\x04\x0f-=\x88 (\x88\x05?" +
+	"\x80\xd0\x93H\xc1\x83\xdf\xc0\x83\xdf\xa0x\x93\x95\x97v" +
+	"\x93\\\x8c\xe0mv\xde\xcc\xfcg~\x7f\xf6\xfcI\xcc" +
+	"\xf2\x05\xff\x0b\x13\xa9S\xfe\x91\xfc\xe3\xcf\x89\xdf\xb7\xef" +
+	"~\xde!\x15B\xe4'x\xff\xf1\xfd\x97\xf7^\x90\xcf" +
+	"%\xa2\xe9+\xd8BU\xc3\x85\xb7\x10\x82\x90\xdf\xf8\xde" +
+	"\xee|zp\xf1+\xc9p\xa4\x9a0\xbd\xce\xab\xa8n" +
+	"\xba\xae\xea+\xbe\\\xdduQ^[\xb8\xba\xfaF\xa8" +
+	"\x1f\xa4j\x00\x1d\x0e}\xcf\xa7\x99P\xdd\xe5\x1dB\xfe" +
+	"k\xef\x89\x7f\xec\xdb\xde>\xc9\x9a+\xe8KE\xe2\xac" +
+	"+X\x13u:\x97wm\x92%i-\xf3\xad\x8e\xd3" +
+	"\x95\xc8\xd6\xb2\xc3`\xca\xe8n\xdc\x9dYv\x9f\xdad" +
+	"\xad$\xd6\xed\xa5\xc8$\xc26\x1b\x80\x0a\x84G\xe4\x81" +
+	"H\xaeY\"\xf5H@=c\x00\x81[D\xae\xbb\xdc" +
+	"S\x01\xb5\xc1\x90\x8c\x00L$\x9fo\x11\xa9\x0d\x01\xb5" +
+	"\xcd\x90\x02\x01\x04\x91\xdct\xc9m\x01\xf5\x8e!=\x0e" +
+	"\xe0\x11\xc9\xb73D\xea\xb5\x80\xfa\xc0\xc8\xd3\xa4gM" +
+	"4g(4I/\xceP!F\x85\x8a\xfc\xbc\xa6\xb0" +
+	"\xadc\x13\xc1'\x86O\xc8\x9bQ\x9a\xb5b\x9d\xa1\x95" +
+	"\xc4s\xc6$=1\xd24\xfa8\xaf\xdb:\x16\xc3\xce" +
+	"\xba\xee\xf4\x05\xca\xc4(\x13\x06h\xbcqhV\"\xbb" +
+	"X\xd7&K\xecC\x87\xc5\x13\xfe\x88/(\xf0Ki" +
+	"\x89e\xb9\x94\x17#(\\\xec\xc5\xcdt\x16\x0d\x0c\x85" +
+	"J\xff\x12:\xd0\x99*\x9e\xfb#\xce4\xb4-\xe9N" +
+	"\xaa*\x03G.9\xfa\x0b\x02\xaa\xc1\x90\x85%\xd7\x1c" +
+	"\xe8\x86\x80\xba\xc9\x00\x1f8r\xddq^\x16Pw\xc6" +
+	"p\x1e\xc7\xf3o\xc8\xfe\xef\x92\xa5(\x9d\xe8\xb5\xb3T" +
+	"y\x83S\x8e\xbb\x0d\x8f\x0a\xa8\x80Q\xb7\x91Il\x13" +
+	"\x93\xc3\x9f\x8a\x80I\xc2\x9f\x00\x00\x00\xff\xff\x98\x86\xf1" +
+	"\xbd"
 
 func init() {
 	schemas.Register(schema_8e7192767ff40215,
-		0xc44234756a55b499,
+		0xafbe625efd0fe5ae,
 		0xc93b78b26d6cd25a,
 		0xe15103a27a4a442f,
 		0xf4cbce0b0580cbf6)

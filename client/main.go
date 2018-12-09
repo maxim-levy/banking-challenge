@@ -3,6 +3,7 @@ package main
 import (
 	createaccount "client/actions/create-account"
 	deleteaccount "client/actions/delete-account"
+	transferfunds "client/actions/transfer-funds"
 	"os"
 
 	"github.com/apex/log"
@@ -56,9 +57,39 @@ func main() {
 				},
 			},
 		},
+		{
+			Name:    "transfer-funds",
+			Aliases: []string{"tf"},
+			Usage:   "Transfer funds from one account to another",
+			Action: func(c *cli.Context) error {
+				s := transferfunds.NewTransferFunds(
+					c.String("source"),
+					c.String("destination"),
+					c.String("amount"),
+				)
+				return s.Do()
+			},
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "source",
+					Value: "",
+					Usage: "Source account number",
+				},
+				cli.StringFlag{
+					Name:  "destination",
+					Value: "",
+					Usage: "Destination account number",
+				},
+				cli.StringFlag{
+					Name:  "amount",
+					Value: "0",
+					Usage: "Amount to transfer from source to destination in cents",
+				},
+			},
+		},
 	}
 
 	if err := app.Run(os.Args); err != nil {
-		log.WithError(err).Fatal("Sorry, Something went wrong when running crypto-banking")
+		log.WithError(err).Fatal("Sorry, Something went wrong while running crypto-banking application")
 	}
 }

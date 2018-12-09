@@ -70,3 +70,43 @@ func (a *Account) Delete(accountNumber string) error {
 
 	return nil
 }
+
+// TransferFunds between two accounts
+func (a *Account) TransferFunds(
+	sourceAccountNumber string,
+	sourceAccountBalance int64,
+	destinationAccountNumber string,
+	destinationAccountBalance int64,
+) error {
+	// Start a writable transaction.
+	tx, err := db.Begin(true)
+	if err != nil {
+		log.WithError(err).Error("failed to start transaction")
+		return err
+	}
+	defer tx.Rollback()
+
+	b := tx.Bucket([]byte(AccountsBucketName))
+
+	// Wite source changes
+	err = b.Put([]byte(sourceAccountNumber), []byte(fmt.Sprintf("%d", sourceAccountBalance)))
+	if err != nil {
+		log.WithError(err).Error("failed to update account")
+		return err
+	}
+
+	// Wite destination changes
+	err = b.Put([]byte(destinationAccountNumber), []byte(fmt.Sprintf("%d", destinationAccountBalance)))
+	if err != nil {
+		log.WithError(err).Error("failed to update account")
+		return err
+	}
+
+	// Commit the transaction and check for error.
+	if err := tx.Commit(); err != nil {
+		log.WithError(err).Error("failed to commit the transaction")
+		return err
+	}
+
+	return nil
+}

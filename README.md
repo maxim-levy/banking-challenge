@@ -23,3 +23,11 @@ After this you should be able to run `./build.sh` with no warnings.
 ## Server
 
 ## TODO's
+* Add redundancy for the server-side.
+* Add auth layer to controll who can modify accounts and balances.
+* Vendor client and server applications
+* ~~Add data persitance using bolt db~~
+* ~~Add create account method~~
+* ~~Add delete account method~~
+* Add transfer funds method
+* Add list accounts method

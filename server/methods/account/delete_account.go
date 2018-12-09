@@ -8,7 +8,7 @@ import (
 	"zombiezen.com/go/capnproto2/server"
 )
 
-func (af accountFactory) DeleteAccount(call account.AccountFactory_deleteAccount) error {
+func (af AccountFactory) DeleteAccount(call account.AccountFactory_deleteAccount) error {
 	log.Info("Called: DeleteAccount")
 	server.Ack(call.Options)
 

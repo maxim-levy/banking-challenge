@@ -3,7 +3,7 @@ package main
 import (
 	"net"
 	"os"
-	"server/methods/account"
+	"server/methods"
 	"server/models"
 
 	"github.com/apex/log"
@@ -36,7 +36,7 @@ func main() {
 		}
 
 		// Register method listeners
-		if err := account.StartServer(conn); err != nil {
+		if err := methods.StartServer(conn); err != nil {
 			log.WithError(err).Fatal("failed")
 		}
 	}
