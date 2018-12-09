@@ -20,6 +20,7 @@ After this you should be able to run `./build.sh` with no warnings.
 
 ## ENV
 You can change the default settings using ENV variables.
+
 Variable | Default value | Description
 --- | --- | ---
 SERVER_ADDR | 127.0.0.1 | The address the server should bind to.
