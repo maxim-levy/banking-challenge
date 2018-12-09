@@ -49,14 +49,28 @@ This will bring up more info about this command.
 Both the server and client folder has their own separate tests.
 You can run them by using the following command `go test ./...` in the client or server folder.
 
+## Performance test results
+Make sure you are running the test on a build bin `go build -o client`.
+```
+hyperfine --min-runs 100 './client ca'
+Time (mean ± σ):       8.2 ms ±   0.7 ms    [User: 3.4 ms, System: 3.7 ms]
+Range (min … max):     6.9 ms …  11.8 ms
+```
+```
+hyperfine --min-runs 100 './client tf --source d0faa986c17a4414ac0d8761ed6c54de --destination c46a8154cc9f4e8298adeb84e3af7d9b --amount 10'
+Time (mean ± σ):       8.3 ms ±   1.1 ms    [User: 3.5 ms, System: 3.6 ms]
+Range (min … max):     6.4 ms …  14.3 ms
+```
+
 ## TODO's
 * ~~Add support for ENV runtime configuration.~~
 * Add redundancy for the server-side.
 * Add auth layer to controll who can modify accounts and balances.
-* Vendor client and server applications
+* Vendor client and server applications.
+* ~~Benchmark system.~~
 * ~~Write unit-tests.~~
-* ~~Add data persitance using bolt db~~
-* ~~Add create account method~~
-* ~~Add delete account method~~
-* ~~Add transfer funds method~~
-* Add list accounts method
+* ~~Add data persitance using bolt db.~~
+* ~~Add create account method.~~
+* ~~Add delete account method.~~
+* ~~Add transfer funds method.~~
+* Add list accounts method.
