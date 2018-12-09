@@ -18,16 +18,40 @@ dir so the `capnpc` command can reach it (or you can add it directly to your $PA
 
 After this you should be able to run `./build.sh` with no warnings.
 
+## ENV
+You can change the default settings using ENV variables.
+Variable | Default value | Description
+--- | --- | ---
+SERVER_ADDR | 127.0.0.1 | The address the server should bind to.
+SERVER_PORT | 8080 | The port the server should run on.
+CLIENT_SERVER_ADDR | 127.0.0.1 | Address of the server the client should connect to.
+CLIENT_SERVER_PORT | 8080 | Port of the server the client should connect to.
+
 ## Client
+The client is a CLI.
+You can run this client directly by cloning the repo and running `go run main.go` from within the client folder.
+
+COMMANDS
+```
+create-account, ca  Register an new account
+delete-account, da  Delete an existing account
+transfer-funds, tf  Transfer funds from one account to another
+help, h             Shows a list of commands or help for one command
+```
+
+For and extended list of options, please type the command you want to execute and apped `--help`,
+This will bring up more info about this command.
 
 ## Server
 
+
 ## TODO's
+* ~~Add support for ENV runtime configuration.~~
 * Add redundancy for the server-side.
 * Add auth layer to controll who can modify accounts and balances.
 * Vendor client and server applications
 * ~~Add data persitance using bolt db~~
 * ~~Add create account method~~
 * ~~Add delete account method~~
-* Add transfer funds method
+* ~~Add transfer funds method~~
 * Add list accounts method

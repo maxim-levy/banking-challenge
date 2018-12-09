@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net"
 	"os"
 	"server/methods"
@@ -17,8 +18,15 @@ func main() {
 	// Will thow with fatal if there is a problem.
 	models.StartBoltDB()
 
+	// Get server config
+	address := os.Getenv("SERVER_ADDR")
+	port := os.Getenv("SERVER_PORT")
+	if port == "" {
+		port = "8080"
+	}
+
 	// Open ports and start listening for connections.
-	addr, err := net.ResolveTCPAddr("tcp", ":8080")
+	addr, err := net.ResolveTCPAddr("tcp", fmt.Sprintf("%s:%s", address, port))
 	if err != nil {
 		log.WithError(err).Fatal("failed")
 	}

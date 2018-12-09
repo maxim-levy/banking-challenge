@@ -1,7 +1,9 @@
 package network
 
 import (
+	"fmt"
 	"net"
+	"os"
 
 	"github.com/apex/log"
 	"zombiezen.com/go/capnproto2/rpc"
@@ -10,11 +12,19 @@ import (
 // NewClient tries to connect to the banking server.
 // returns a rpc connection if successfull.
 func NewClient() (*rpc.Conn, error) {
-	addr := "127.0.0.1:8080"
+	addr := os.Getenv("CLIENT_SERVER_ADDR")
+	port := os.Getenv("CLIENT_SERVER_PORT")
+	// Set defaults
+	if addr == "" {
+		addr = "127.0.0.1"
+	}
+	if port == "" {
+		port = "8080"
+	}
 
-	dial, err := net.Dial("tcp", addr)
+	dial, err := net.Dial("tcp", fmt.Sprintf("%s:%s", addr, port))
 	if err != nil {
-		log.WithError(err).Errorf("can't connect to server at %s", addr)
+		log.WithError(err).Errorf("can't connect to server at %s", fmt.Sprintf("%s:%s", addr, port))
 		return nil, err
 	}
 
