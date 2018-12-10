@@ -44,6 +44,14 @@ For and extended list of options, please type the command you want to execute an
 This will bring up more info about this command.
 
 ## Server
+The server will listen for RPC calls over TCP using the cap'n proto serialization protocol.
+It will bind to the host address and port spesified with the ENV variables.
+```
+SERVER_ADDR: 127.0.0.1
+SERVER_PORT: 8080
+```
+To start the server run `go run main.go` in the server folder.
+The server will write a `ledger.db` file to disk to persist all the accounts data.
 
 ## Tests
 Both the server and client folder has their own separate tests.
