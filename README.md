@@ -1,5 +1,5 @@
-# banking-challange
-Banking programming challange.
+# banking-challenge
+Banking programming challenge.
 
 ## Install
 You will need to install the cap'n libs inorder to edit the protocols.
