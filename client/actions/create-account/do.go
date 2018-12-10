@@ -28,6 +28,11 @@ func NewCreateAccount(initBalance string) *CreateAccount {
 	}
 }
 
+// Result can be called after successfull Do().
+func (c *CreateAccount) Result() account.Account {
+	return c.account
+}
+
 // Do steps
 func (c *CreateAccount) Do() (err error) {
 	if err = c.connectToServer(); err != nil {

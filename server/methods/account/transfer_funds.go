@@ -1,14 +1,14 @@
-package transfer
+package account
 
 import (
-	"protos/transfer"
+	"protos/account"
 	transferfunds "server/services/transfer-funds"
 
 	"github.com/apex/log"
 	"zombiezen.com/go/capnproto2/server"
 )
 
-func (tf TransferFactory) TransferFunds(call transfer.TransferFactory_transferFunds) error {
+func (af AccountFactory) TransferFunds(call account.AccountFactory_transferFunds) error {
 	log.Info("Called: TransferFunds")
 	server.Ack(call.Options)
 

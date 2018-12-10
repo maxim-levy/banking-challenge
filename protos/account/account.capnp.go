@@ -55,11 +55,33 @@ func (c AccountFactory) DeleteAccount(ctx context.Context, params func(AccountFa
 	}
 	return AccountFactory_deleteAccount_Results_Promise{Pipeline: capnp.NewPipeline(c.Client.Call(call))}
 }
+func (c AccountFactory) TransferFunds(ctx context.Context, params func(AccountFactory_transferFunds_Params) error, opts ...capnp.CallOption) AccountFactory_transferFunds_Results_Promise {
+	if c.Client == nil {
+		return AccountFactory_transferFunds_Results_Promise{Pipeline: capnp.NewPipeline(capnp.ErrorAnswer(capnp.ErrNullClient))}
+	}
+	call := &capnp.Call{
+		Ctx: ctx,
+		Method: capnp.Method{
+			InterfaceID:   0xc61948737160d61d,
+			MethodID:      2,
+			InterfaceName: "protos/account/account.capnp:AccountFactory",
+			MethodName:    "transferFunds",
+		},
+		Options: capnp.NewCallOptions(opts),
+	}
+	if params != nil {
+		call.ParamsSize = capnp.ObjectSize{DataSize: 8, PointerCount: 2}
+		call.ParamsFunc = func(s capnp.Struct) error { return params(AccountFactory_transferFunds_Params{Struct: s}) }
+	}
+	return AccountFactory_transferFunds_Results_Promise{Pipeline: capnp.NewPipeline(c.Client.Call(call))}
+}
 
 type AccountFactory_Server interface {
 	CreateAccount(AccountFactory_createAccount) error
 
 	DeleteAccount(AccountFactory_deleteAccount) error
+
+	TransferFunds(AccountFactory_transferFunds) error
 }
 
 func AccountFactory_ServerToClient(s AccountFactory_Server) AccountFactory {
@@ -69,7 +91,7 @@ func AccountFactory_ServerToClient(s AccountFactory_Server) AccountFactory {
 
 func AccountFactory_Methods(methods []server.Method, s AccountFactory_Server) []server.Method {
 	if cap(methods) == 0 {
-		methods = make([]server.Method, 0, 2)
+		methods = make([]server.Method, 0, 3)
 	}
 
 	methods = append(methods, server.Method{
@@ -100,6 +122,20 @@ func AccountFactory_Methods(methods []server.Method, s AccountFactory_Server) []
 		ResultsSize: capnp.ObjectSize{DataSize: 8, PointerCount: 0},
 	})
 
+	methods = append(methods, server.Method{
+		Method: capnp.Method{
+			InterfaceID:   0xc61948737160d61d,
+			MethodID:      2,
+			InterfaceName: "protos/account/account.capnp:AccountFactory",
+			MethodName:    "transferFunds",
+		},
+		Impl: func(c context.Context, opts capnp.CallOptions, p, r capnp.Struct) error {
+			call := AccountFactory_transferFunds{c, opts, AccountFactory_transferFunds_Params{Struct: p}, AccountFactory_transferFunds_Results{Struct: r}}
+			return s.TransferFunds(call)
+		},
+		ResultsSize: capnp.ObjectSize{DataSize: 0, PointerCount: 1},
+	})
+
 	return methods
 }
 
@@ -117,6 +153,14 @@ type AccountFactory_deleteAccount struct {
 	Options capnp.CallOptions
 	Params  AccountFactory_deleteAccount_Params
 	Results AccountFactory_deleteAccount_Results
+}
+
+// AccountFactory_transferFunds holds the arguments for a server call to AccountFactory.transferFunds.
+type AccountFactory_transferFunds struct {
+	Ctx     context.Context
+	Options capnp.CallOptions
+	Params  AccountFactory_transferFunds_Params
+	Results AccountFactory_transferFunds_Results
 }
 
 type AccountFactory_createAccount_Params struct{ capnp.Struct }
@@ -403,6 +447,191 @@ func (p AccountFactory_deleteAccount_Results_Promise) Struct() (AccountFactory_d
 	return AccountFactory_deleteAccount_Results{s}, err
 }
 
+type AccountFactory_transferFunds_Params struct{ capnp.Struct }
+
+// AccountFactory_transferFunds_Params_TypeID is the unique identifier for the type AccountFactory_transferFunds_Params.
+const AccountFactory_transferFunds_Params_TypeID = 0x9ad4e206dd4920d0
+
+func NewAccountFactory_transferFunds_Params(s *capnp.Segment) (AccountFactory_transferFunds_Params, error) {
+	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 8, PointerCount: 2})
+	return AccountFactory_transferFunds_Params{st}, err
+}
+
+func NewRootAccountFactory_transferFunds_Params(s *capnp.Segment) (AccountFactory_transferFunds_Params, error) {
+	st, err := capnp.NewRootStruct(s, capnp.ObjectSize{DataSize: 8, PointerCount: 2})
+	return AccountFactory_transferFunds_Params{st}, err
+}
+
+func ReadRootAccountFactory_transferFunds_Params(msg *capnp.Message) (AccountFactory_transferFunds_Params, error) {
+	root, err := msg.RootPtr()
+	return AccountFactory_transferFunds_Params{root.Struct()}, err
+}
+
+func (s AccountFactory_transferFunds_Params) String() string {
+	str, _ := text.Marshal(0x9ad4e206dd4920d0, s.Struct)
+	return str
+}
+
+func (s AccountFactory_transferFunds_Params) SourceAccount() (string, error) {
+	p, err := s.Struct.Ptr(0)
+	return p.Text(), err
+}
+
+func (s AccountFactory_transferFunds_Params) HasSourceAccount() bool {
+	p, err := s.Struct.Ptr(0)
+	return p.IsValid() || err != nil
+}
+
+func (s AccountFactory_transferFunds_Params) SourceAccountBytes() ([]byte, error) {
+	p, err := s.Struct.Ptr(0)
+	return p.TextBytes(), err
+}
+
+func (s AccountFactory_transferFunds_Params) SetSourceAccount(v string) error {
+	return s.Struct.SetText(0, v)
+}
+
+func (s AccountFactory_transferFunds_Params) DestinationAccount() (string, error) {
+	p, err := s.Struct.Ptr(1)
+	return p.Text(), err
+}
+
+func (s AccountFactory_transferFunds_Params) HasDestinationAccount() bool {
+	p, err := s.Struct.Ptr(1)
+	return p.IsValid() || err != nil
+}
+
+func (s AccountFactory_transferFunds_Params) DestinationAccountBytes() ([]byte, error) {
+	p, err := s.Struct.Ptr(1)
+	return p.TextBytes(), err
+}
+
+func (s AccountFactory_transferFunds_Params) SetDestinationAccount(v string) error {
+	return s.Struct.SetText(1, v)
+}
+
+func (s AccountFactory_transferFunds_Params) Amount() uint64 {
+	return s.Struct.Uint64(0)
+}
+
+func (s AccountFactory_transferFunds_Params) SetAmount(v uint64) {
+	s.Struct.SetUint64(0, v)
+}
+
+// AccountFactory_transferFunds_Params_List is a list of AccountFactory_transferFunds_Params.
+type AccountFactory_transferFunds_Params_List struct{ capnp.List }
+
+// NewAccountFactory_transferFunds_Params creates a new list of AccountFactory_transferFunds_Params.
+func NewAccountFactory_transferFunds_Params_List(s *capnp.Segment, sz int32) (AccountFactory_transferFunds_Params_List, error) {
+	l, err := capnp.NewCompositeList(s, capnp.ObjectSize{DataSize: 8, PointerCount: 2}, sz)
+	return AccountFactory_transferFunds_Params_List{l}, err
+}
+
+func (s AccountFactory_transferFunds_Params_List) At(i int) AccountFactory_transferFunds_Params {
+	return AccountFactory_transferFunds_Params{s.List.Struct(i)}
+}
+
+func (s AccountFactory_transferFunds_Params_List) Set(i int, v AccountFactory_transferFunds_Params) error {
+	return s.List.SetStruct(i, v.Struct)
+}
+
+func (s AccountFactory_transferFunds_Params_List) String() string {
+	str, _ := text.MarshalList(0x9ad4e206dd4920d0, s.List)
+	return str
+}
+
+// AccountFactory_transferFunds_Params_Promise is a wrapper for a AccountFactory_transferFunds_Params promised by a client call.
+type AccountFactory_transferFunds_Params_Promise struct{ *capnp.Pipeline }
+
+func (p AccountFactory_transferFunds_Params_Promise) Struct() (AccountFactory_transferFunds_Params, error) {
+	s, err := p.Pipeline.Struct()
+	return AccountFactory_transferFunds_Params{s}, err
+}
+
+type AccountFactory_transferFunds_Results struct{ capnp.Struct }
+
+// AccountFactory_transferFunds_Results_TypeID is the unique identifier for the type AccountFactory_transferFunds_Results.
+const AccountFactory_transferFunds_Results_TypeID = 0x8d59903b14cbf6a4
+
+func NewAccountFactory_transferFunds_Results(s *capnp.Segment) (AccountFactory_transferFunds_Results, error) {
+	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 1})
+	return AccountFactory_transferFunds_Results{st}, err
+}
+
+func NewRootAccountFactory_transferFunds_Results(s *capnp.Segment) (AccountFactory_transferFunds_Results, error) {
+	st, err := capnp.NewRootStruct(s, capnp.ObjectSize{DataSize: 0, PointerCount: 1})
+	return AccountFactory_transferFunds_Results{st}, err
+}
+
+func ReadRootAccountFactory_transferFunds_Results(msg *capnp.Message) (AccountFactory_transferFunds_Results, error) {
+	root, err := msg.RootPtr()
+	return AccountFactory_transferFunds_Results{root.Struct()}, err
+}
+
+func (s AccountFactory_transferFunds_Results) String() string {
+	str, _ := text.Marshal(0x8d59903b14cbf6a4, s.Struct)
+	return str
+}
+
+func (s AccountFactory_transferFunds_Results) Record() (TransactionalRecord, error) {
+	p, err := s.Struct.Ptr(0)
+	return TransactionalRecord{Struct: p.Struct()}, err
+}
+
+func (s AccountFactory_transferFunds_Results) HasRecord() bool {
+	p, err := s.Struct.Ptr(0)
+	return p.IsValid() || err != nil
+}
+
+func (s AccountFactory_transferFunds_Results) SetRecord(v TransactionalRecord) error {
+	return s.Struct.SetPtr(0, v.Struct.ToPtr())
+}
+
+// NewRecord sets the record field to a newly
+// allocated TransactionalRecord struct, preferring placement in s's segment.
+func (s AccountFactory_transferFunds_Results) NewRecord() (TransactionalRecord, error) {
+	ss, err := NewTransactionalRecord(s.Struct.Segment())
+	if err != nil {
+		return TransactionalRecord{}, err
+	}
+	err = s.Struct.SetPtr(0, ss.Struct.ToPtr())
+	return ss, err
+}
+
+// AccountFactory_transferFunds_Results_List is a list of AccountFactory_transferFunds_Results.
+type AccountFactory_transferFunds_Results_List struct{ capnp.List }
+
+// NewAccountFactory_transferFunds_Results creates a new list of AccountFactory_transferFunds_Results.
+func NewAccountFactory_transferFunds_Results_List(s *capnp.Segment, sz int32) (AccountFactory_transferFunds_Results_List, error) {
+	l, err := capnp.NewCompositeList(s, capnp.ObjectSize{DataSize: 0, PointerCount: 1}, sz)
+	return AccountFactory_transferFunds_Results_List{l}, err
+}
+
+func (s AccountFactory_transferFunds_Results_List) At(i int) AccountFactory_transferFunds_Results {
+	return AccountFactory_transferFunds_Results{s.List.Struct(i)}
+}
+
+func (s AccountFactory_transferFunds_Results_List) Set(i int, v AccountFactory_transferFunds_Results) error {
+	return s.List.SetStruct(i, v.Struct)
+}
+
+func (s AccountFactory_transferFunds_Results_List) String() string {
+	str, _ := text.MarshalList(0x8d59903b14cbf6a4, s.List)
+	return str
+}
+
+// AccountFactory_transferFunds_Results_Promise is a wrapper for a AccountFactory_transferFunds_Results promised by a client call.
+type AccountFactory_transferFunds_Results_Promise struct{ *capnp.Pipeline }
+
+func (p AccountFactory_transferFunds_Results_Promise) Struct() (AccountFactory_transferFunds_Results, error) {
+	s, err := p.Pipeline.Struct()
+	return AccountFactory_transferFunds_Results{s}, err
+}
+
+func (p AccountFactory_transferFunds_Results_Promise) Record() TransactionalRecord_Promise {
+	return TransactionalRecord_Promise{Pipeline: p.Pipeline.GetPipeline(0)}
+}
+
 type Account struct{ capnp.Struct }
 
 // Account_TypeID is the unique identifier for the type Account.
@@ -481,44 +710,183 @@ func (p Account_Promise) Struct() (Account, error) {
 	return Account{s}, err
 }
 
-const schema_9a4e56aa8fe168ad = "x\xda\xa4\x92?h\x14A\x18\xc5\xdf\x9b\xd9u\xa3\x9c" +
-	"\x9a\xcdFPp\x09A\x0b#g\xe2\x11\x0b#\x81\x8b" +
-	"\x01E,\xc2\x8d\x85`!8\xb7\xaexp\xb9=w" +
-	"\xf7\x08\xb1\x09*j)he\xb0\xb1=\xb0I\x97\xc6" +
-	"RH!\x88\x82`#\x88ZX[i\xb32\xf7w" +
-	"\x05C\x84T\xbb3\xf3\xf1~\xdf\xf7\xbew\xda\xe7\x82" +
-	"(\xd9+\x12P'\xec=\x99U\x99\x0f\xaf\xcd?\xbd" +
-	"\x0f\xb7H\xc0\xa6\x03\xcc\xbe\xe4\x98\x00\xbdM\x96\xc1l" +
-	"\xee\xeb\xd1o\x0f7~>\x80\xf2\xc9\xec\xd5\xed/O" +
-	"\xdaW\x97\xd6{\x95\x9fx\x92\xde\x0f\xf3\xeb}\xe7\x0a" +
-	"\x98=\xfb\xf5\xfa\xd1\xe5\xcf\xc7^\xe4\xe5.\x88}F" +
-	"\xee\xba0rc\xf6\xfa\xad\xdf\x1bsm\xa8\"\x09X" +
-	"\xa6\xe0\x9e\xe8\xf0\x9ew\x0a\xfc\x8f7\xee$\x97\x8e\xbc" +
-	"\x81\xeb\xcb!\x0e\x9c\xdd\x14Uzo\x85am\x89\xc7" +
-	"\xde\xa4t\x80\xec\x03\x0f\xbcon\xb5\xdf\xe5\xe5\xf6\xca" +
-	"\x0eoR\x96q*k\xc6Q\x1a%3\xda\x09\x82\xa8" +
-	"\xd5Hgt\xf7;\x1d\xe8f\xa3y\xee|\xf7tQ" +
-	"\x07i\x14\xafN\x07q\xa8\xd3\xb0wy\xfcJ\x98\xb4" +
-	"\xea)\x13eI\x0b\xb0\x08\xb8\xfb\x17\x015\"\xa9\xc6" +
-	"\x05\xd7zR\x1c\x1dz\x04r\x14\x1c@\xe5v\xd0\x83" +
-	"\xe6X!\xd5\xc8@z*6\x1b\x91Tg\x04\xc9q" +
-	"3\x8d[2\xb8\xa2\xa4:+\x98\xf5D\x960\xd1Z" +
-	"\xae\x861\x0b\x10,\x80kU]\xd7\x8d \xa4\x0dA" +
-	";\x07\xff\xaf\x89o\x86\xf5p8qE\xc7z9\x01" +
-	"\xf2\x13\x9b\xb6\x0a\x92\xea\xf0\xf6-\xec\x06\xb9\x93\xc9I" +
-	"+\x08\xc2$!!\xc8\x1c\xca\xda\x09\xe5D\xf1j\xd7" +
-	"a;\x97\x13\xf6\xf3\xee\x96b\x08w\xca\xe10\xb3\xec" +
-	"g\xd3\xf5\xcd\xdb!'\xeb\xe7\x01\x13\x1d\xd9\x05f\xfd" +
-	"\xe6\x077\x15r7\x19\xfb\x97\xe3ws\x8e\xd7\x1a\xb5" +
-	"\xb4\xa6\xeb\x8b(\xff\xbd\xe5?\x01\x00\x00\xff\xff^\x1b" +
-	"\x14j"
+type TransactionalRecord struct{ capnp.Struct }
+
+// TransactionalRecord_TypeID is the unique identifier for the type TransactionalRecord.
+const TransactionalRecord_TypeID = 0xf9cd6687a9856051
+
+func NewTransactionalRecord(s *capnp.Segment) (TransactionalRecord, error) {
+	st, err := capnp.NewStruct(s, capnp.ObjectSize{DataSize: 24, PointerCount: 2})
+	return TransactionalRecord{st}, err
+}
+
+func NewRootTransactionalRecord(s *capnp.Segment) (TransactionalRecord, error) {
+	st, err := capnp.NewRootStruct(s, capnp.ObjectSize{DataSize: 24, PointerCount: 2})
+	return TransactionalRecord{st}, err
+}
+
+func ReadRootTransactionalRecord(msg *capnp.Message) (TransactionalRecord, error) {
+	root, err := msg.RootPtr()
+	return TransactionalRecord{root.Struct()}, err
+}
+
+func (s TransactionalRecord) String() string {
+	str, _ := text.Marshal(0xf9cd6687a9856051, s.Struct)
+	return str
+}
+
+func (s TransactionalRecord) SourceAccount() (string, error) {
+	p, err := s.Struct.Ptr(0)
+	return p.Text(), err
+}
+
+func (s TransactionalRecord) HasSourceAccount() bool {
+	p, err := s.Struct.Ptr(0)
+	return p.IsValid() || err != nil
+}
+
+func (s TransactionalRecord) SourceAccountBytes() ([]byte, error) {
+	p, err := s.Struct.Ptr(0)
+	return p.TextBytes(), err
+}
+
+func (s TransactionalRecord) SetSourceAccount(v string) error {
+	return s.Struct.SetText(0, v)
+}
+
+func (s TransactionalRecord) SourceBalance() int64 {
+	return int64(s.Struct.Uint64(0))
+}
+
+func (s TransactionalRecord) SetSourceBalance(v int64) {
+	s.Struct.SetUint64(0, uint64(v))
+}
+
+func (s TransactionalRecord) DestinationAccount() (string, error) {
+	p, err := s.Struct.Ptr(1)
+	return p.Text(), err
+}
+
+func (s TransactionalRecord) HasDestinationAccount() bool {
+	p, err := s.Struct.Ptr(1)
+	return p.IsValid() || err != nil
+}
+
+func (s TransactionalRecord) DestinationAccountBytes() ([]byte, error) {
+	p, err := s.Struct.Ptr(1)
+	return p.TextBytes(), err
+}
+
+func (s TransactionalRecord) SetDestinationAccount(v string) error {
+	return s.Struct.SetText(1, v)
+}
+
+func (s TransactionalRecord) DestinationBalance() int64 {
+	return int64(s.Struct.Uint64(8))
+}
+
+func (s TransactionalRecord) SetDestinationBalance(v int64) {
+	s.Struct.SetUint64(8, uint64(v))
+}
+
+func (s TransactionalRecord) Amount() uint64 {
+	return s.Struct.Uint64(16)
+}
+
+func (s TransactionalRecord) SetAmount(v uint64) {
+	s.Struct.SetUint64(16, v)
+}
+
+// TransactionalRecord_List is a list of TransactionalRecord.
+type TransactionalRecord_List struct{ capnp.List }
+
+// NewTransactionalRecord creates a new list of TransactionalRecord.
+func NewTransactionalRecord_List(s *capnp.Segment, sz int32) (TransactionalRecord_List, error) {
+	l, err := capnp.NewCompositeList(s, capnp.ObjectSize{DataSize: 24, PointerCount: 2}, sz)
+	return TransactionalRecord_List{l}, err
+}
+
+func (s TransactionalRecord_List) At(i int) TransactionalRecord {
+	return TransactionalRecord{s.List.Struct(i)}
+}
+
+func (s TransactionalRecord_List) Set(i int, v TransactionalRecord) error {
+	return s.List.SetStruct(i, v.Struct)
+}
+
+func (s TransactionalRecord_List) String() string {
+	str, _ := text.MarshalList(0xf9cd6687a9856051, s.List)
+	return str
+}
+
+// TransactionalRecord_Promise is a wrapper for a TransactionalRecord promised by a client call.
+type TransactionalRecord_Promise struct{ *capnp.Pipeline }
+
+func (p TransactionalRecord_Promise) Struct() (TransactionalRecord, error) {
+	s, err := p.Pipeline.Struct()
+	return TransactionalRecord{s}, err
+}
+
+const schema_9a4e56aa8fe168ad = "x\xda\xa4T_H<U\x14>\xdf\xbd3\xbf\xfd\xfd" +
+	"b+\xaf\xbb\x0f\x09\xc9\x16\x15T\x98&\x1a\xa4)\xab" +
+	"KJ\x06\xc9^\x91@(\xf0:;\xd2\xc2\xee\xcc6" +
+	"3K\x18\x85PY\x11HRO->\xf4PP\x92" +
+	"\x04\xbe\xd7\x9b\x85D \xfd{+\xb0z\xe99\x10\x0c" +
+	"b\xe2\xce\xec\xee\x8c\xe2\x9f\xca\xa7\xdd\xb9\xf7\xdc\xef;" +
+	"\xdf9\xdf9\x8f\x1ec\x8a\x0d\x9b\xeb\x06\x91\x1c5o" +
+	"\x84Fy\xc2^\x9ax\xef5\x12\x03 2\x91!\x1a" +
+	"y\x80\xf52Bn\x92\x15\x09\xe1\xd8ow\xff\xbe\xb1" +
+	"\xf7\xe7\xeb$\xfb\x81p\xf7\x85\xa3ww\x9e\x9do\xb5" +
+	"#\x9fg\x0f#Wg\x19\xa2\\\x95\xbdD\x08?:" +
+	"\xfe&\xff\xc4\xd6\xd2f\x1a\xee \x86;\x8a\xe0\x0e\xef" +
+	"\x99\xfb\xf9\xc6\xaf?\xb4H\x0e@G\xe8\xb7#\xe0\xb7" +
+	"\xe9\x88>\xfe9!|\xff\xe4\xcb7\x9f\xfe\xe5\xbe\xed" +
+	"4\xc4\x17q\xc0\x8f\\C\xf4\x9a\xad\xd5\xbf\xf6\xc6v" +
+	"\xda\x10\x86\x0e8\xe1\x11\x870t@\xffO\xcb/\xfa" +
+	"O\xf5}E\xa2\x9f'\x19\x13F\x86\x8d\x15\xe4f\xf4" +
+	"\x83\xdc\xb4\xf1un_\xff\x0b\xbf\xc7\x1d\xdf5\x0ev" +
+	"\x0e\xd3p\xbbF\xc4\xb7\x1f\xc1\xc9\xe5\x8dO\xdfZ\xfd" +
+	"\xf6DW \x85\x17\xa7\xfe\x87\xf1\x0er0\xf5\xdf\xbf" +
+	"\x8d\x02\xe8\x91\xb0\xe1\xb9\x81\xeb\x0f\xa9\x8ce\xb9M'" +
+	"\x18R\xf1\xef\xa0\xa5\x1aNc|:\xfe\x9aUV\xe0" +
+	"zk\x83\x96g\xab\xc0n\x1f\xde\xbf`\xfb\xcdZ\x00" +
+	"_\x1a\xdc 2@$n/\x11\xc9\x9b\x1c2\xcf\xb0" +
+	"\xde\x86BO\xd2\x15\x02z\x08]R~\x11\xe9\x9d\xfa" +
+	"\xb3\x0c\xc8\x9b]\xe8\x87<\"\xf9 \x87\x1ce\x00\xf2" +
+	"Z\xbc\x18\xd6t\x03\x1c\xf2q\x86\xb0\x0d2O\x85f" +
+	"}\xc5\xf6\x90%\x86,a}E\xd5\x94c\xd90\x89" +
+	"\xc1L\x91\xff+\xc5\x81\xa7\x1c\x7f\xd5\xf6f\x9bN\xc5" +
+	"?W\xf1x\xa2\xb8\xe8\xd9\x96\xebU\xd0\x934\xe1\x8c" +
+	"\xe0\xff\xc1YV\x9e\xaa\xfbD2\xdb\xe5\x9c\xd1\xa5x" +
+	"\x92C\x96\x19D\xa7\x16\xcf\xb4\x88d\x99C>\xc7\x00" +
+	"\x96\x07#\x12K:\xb9E\x0e\xb9\xcc\x10\xfan\xd3\xb3" +
+	"\xeci\x8b\x0aq[\xda\xf5\x09+\xb6\x1fT\x1d\x15\xa0" +
+	"\xea:Q&<\xb9,\xaaz\x14{\x8b\x18n\xfdW" +
+	"\x1d\x15\xbbf'n\xe9\xeaH\xd5\xce\x8bdA\xdeu" +
+	"q\xfb\xaeCy\x95A\xfd\xa6e\xd9\xbe\x0f\x10\x03R" +
+	"T\xc6UT\x19\xd7[\xd3\xee\xccr35\x92\xe8l" +
+	"'!=bb.\x83d=\xa0\xb3\x06\xc4\xa4\xbe{" +
+	",\x03\xd6].\xe8\xac!\xedq&\xee\xcd\x84\x9d9" +
+	"k\xb7jJ7)\x16\x96\x9ct\\B\x85\xc8'S" +
+	"(\x03\xd7\x99\xe6\xf3\xfa\xf3r\xaa?U\xa7\x1aTU" +
+	"\xadD\xc5\x0b\xe6\xc9<\x97sQ\xa7\xa9\xac\xa0\xea:" +
+	"\xaa\xb6\x10\xcd\x07\x91\xae]\xbeK\xf3\xaa\xb6\xc1+\x1c" +
+	"\xf2\xedd\xb27\xf4\xd9\x1b\x1cr\x8bA0\xc4v\xde" +
+	"\xd4\x16\xdf\xe2\x90\xdb\x0c\x82#\x0fN$>\xd0\x87\xdb" +
+	"\x1c\xf2\x13\x06a\xb0<\x0c\"\xf1\xb16\xfe\x87\x1c\xf2" +
+	"\xb3K\x8c\x1f\x9f\x97\x14\x15N\x0b\xbal N]\x96" +
+	"t%x\xf2\xf2\xcc\xb4\xfc\x13\x00\x00\xff\xffz\xce\xe0" +
+	"V"
 
 func init() {
 	schemas.Register(schema_9a4e56aa8fe168ad,
 		0x82923c59653c5004,
 		0x83f3b285e41ce339,
+		0x8d59903b14cbf6a4,
+		0x9ad4e206dd4920d0,
 		0x9c23de4a86bef993,
 		0xaa39b2fa669a0512,
 		0xc61948737160d61d,
-		0xd0aac970d20e01d3)
+		0xd0aac970d20e01d3,
+		0xf9cd6687a9856051)
 }

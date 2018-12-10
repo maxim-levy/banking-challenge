@@ -5,7 +5,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"protos/transfer"
+	"protos/account"
 	"strconv"
 
 	"github.com/apex/log"
@@ -19,7 +19,7 @@ type TransferFunds struct {
 	fundsAmount        string
 	conn               *rpc.Conn
 	ctx                context.Context
-	record             transfer.TransactionalRecord
+	record             account.TransactionalRecord
 }
 
 // NewTransferFunds instance
@@ -84,8 +84,8 @@ func (t *TransferFunds) connectToServer() (err error) {
 }
 
 func (t *TransferFunds) sendCreateRequst() error {
-	sess := transfer.TransferFactory{Client: t.conn.Bootstrap(t.ctx)}
-	ca := sess.TransferFunds(t.ctx, func(p transfer.TransferFactory_transferFunds_Params) (err error) {
+	sess := account.AccountFactory{Client: t.conn.Bootstrap(t.ctx)}
+	ca := sess.TransferFunds(t.ctx, func(p account.AccountFactory_transferFunds_Params) (err error) {
 		err = p.SetSourceAccount(t.sourceAccount)
 		if err != nil {
 			log.WithError(err).Error("failed to SetSourceAccount")
