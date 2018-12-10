@@ -17,6 +17,14 @@ you will now need to move this file in to your `/usr/local/go/bin`
 dir so the `capnpc` command can reach it (or you can add it directly to your $PATH).
 
 After this you should be able to run `./build.sh` with no warnings.
+This will compile the .capnp files in to golang.
+
+You will also need to run `go get` in the client and server dirs to get the golang dependencies.
+The folders have not been vendored due to it's complicated to include the local protos package in to the
+vendor folder using `dep`.
+The possible solution for this would be to publish the protos package in it's own repo and go get it from there or
+change the project structure to have one main.go file that through cli flags will decide to start the server
+or to execute the client calls.
 
 ## ENV
 You can change the default settings using ENV variables.
