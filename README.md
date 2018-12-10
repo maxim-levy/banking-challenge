@@ -26,6 +26,17 @@ The possible solution for this would be to publish the protos package in it's ow
 change the project structure to have one main.go file that through cli flags will decide to start the server
 or to execute the client calls.
 
+Folder structure.
+1. Create a folder on disk called "banking-challenge".
+2. `cd banking-challenge` in to the banking-challenge folder and clone this repo `git clone git@github.com:thedanielforum/banking-challenge.git`.
+3. Rename the banking-challenge folder to src `mv banking-challenge src`.
+4. Set GOPATH `export GOPATH=$(pwd)`.
+5. Download client deps `cd src/client && go get && cd $GOPATH`.
+6. Download server deps `cd src/server && go get && cd $GOPATH`.
+
+Done! 🎉
+You can now run server and client by going to the dir in question and running `go run main.go`.
+
 ## ENV
 You can change the default settings using ENV variables.
 
