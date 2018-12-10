@@ -32,6 +32,13 @@ func NewTransferFunds(sourceAccount, destinationAccount, fundsAmount string) *Tr
 	}
 }
 
+// Result can be called after successfull Do().
+func (t *TransferFunds) Result() account.TransactionalRecord {
+	// Close conection not to block the thread.
+	t.conn.Close()
+	return t.record
+}
+
 // Do steps
 func (t *TransferFunds) Do() (err error) {
 	if err = t.validate(); err != nil {

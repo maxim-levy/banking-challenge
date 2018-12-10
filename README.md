@@ -82,3 +82,4 @@ Range (min … max):     6.4 ms …  14.3 ms
 * ~~Add delete account method.~~
 * ~~Add transfer funds method.~~
 * Add list accounts method.
+* Expand unit-tests to test for more edge case scenarios.

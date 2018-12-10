@@ -30,6 +30,8 @@ func NewCreateAccount(initBalance string) *CreateAccount {
 
 // Result can be called after successfull Do().
 func (c *CreateAccount) Result() account.Account {
+	// Close conection not to block the thread.
+	c.conn.Close()
 	return c.account
 }
 
