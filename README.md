@@ -1,5 +1,5 @@
-# quoine-banking
-Interview test for quoine
+# banking-challange
+Banking programming challange.
 
 ## Install
 You will need to install the cap'n libs inorder to edit the protocols.
